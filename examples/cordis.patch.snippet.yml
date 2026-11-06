@@ -1,0 +1,50 @@
+# 安装方式（任选一种）：
+#
+# A. 作为「包」装进 profile —— 推荐，和官方 bundle 同一种形态。
+#    ../package.json 的 dsh.bundle.patch 指向本文件的 cordis.patch.yml，
+#    面板入口与 Host 路由都由这一份 patch 挂上，不需要再手写 name 行。
+#    <绝对路径> 换成你 clone 下来的目录（Windows 用正斜杠更稳）。
+#
+#      "dependencies": {
+#        "dsh-usage-stats": "link:P:/absolute/path/to/DSH-UsageStats-WhenNeedOverview"
+#      },
+#      "dsh": {
+#        "profile": {
+#          "bundles": [
+#            "@deepseek-ai/dsh-base",
+#            "@deepseek-ai/dsh-web-app",
+#            "dsh-usage-stats"
+#          ]
+#        }
+#      }
+#
+# B. 只把行加进 profile 的 patch 层 —— 适合不想动 package.json 的情况。
+#    把下面这段追加到 ~/.dsh/profiles/<profile>/cordis.patch.yml 的 insert 列表里。
+#    注意：走这条路时 name 必须是本仓库的绝对路径，且 `id` 不要和别的包重复。
+#
+# 价格单位是「每 100 万 token」；default 里的数字是占位默认值，换成你实付的价格。
+# 两种方式改完都要重启 DSH（Host 半边在启动时装载）。
+- insert:
+    - id: usage-stats
+      name: "/absolute/path/to/DSH-UsageStats-WhenNeedOverview/index.js"
+      config:
+        budget: 200
+        budgetPeriod: month
+        currency: CNY
+        cacheTtlMs: 30000
+        cpuSampleIntervalMs: 2000
+        cpuHistoryLength: 90
+        maxConversations: 300
+        pricing:
+          default:
+            input: 2
+            output: 8
+            cacheRead: 0.5
+            cacheWrite: 2
+          # 需要单独定价的模型写在 models 下，键写成 "provider/model" 或只写 model：
+          #   some-provider/some-model:
+          #     input: 1
+          #     output: 4
+          #     cacheRead: 0.25
+          #     cacheWrite: 1
+          models: {}

@@ -1,0 +1,39 @@
+# usage-stats — 用量统计面板。
+#
+# Host 半边把每个会话日志里的 token 用量折出来，估算费用，采样 CPU，
+# 通过一条只读的 GET 路由把快照交给面板；Client 半边在侧边栏加一个面板入口，
+# 主栏显示仪表盘。
+#
+# 价格单位：每 100 万 token。default 对所有模型生效；
+# models 里的键写成 "provider/model"（也可只写 model），优先级高于 default。
+- insert:
+    - id: usage-stats
+      name: 'dsh-usage-stats'
+      config:
+        # 预算：展示已用/剩余/百分比。0 表示只显示花费、不显示进度。
+        budget: 200
+        # month = 本自然月；all = 全部历史累计。
+        budgetPeriod: month
+        currency: CNY
+        # 会话日志的折叠缓存有效期。非 live 的会话只读一次，live 的每次都重读。
+        cacheTtlMs: 30000
+        # CPU 采样间隔与历史长度（面板上的走势图）。
+        cpuSampleIntervalMs: 2000
+        cpuHistoryLength: 90
+        # 一次快照最多列出多少个会话（按花费降序）。
+        maxConversations: 300
+        pricing:
+          # 占位默认值，按 DeepSeek 官方列表价的形状填的；换成你实付的价格。
+          default:
+            input: 2
+            output: 8
+            cacheRead: 0.5
+            cacheWrite: 2
+          # 需要单独定价的模型写在这里，键写成 "provider/model" 或只写 model，例如：
+          # models:
+          #   some-provider/some-model:
+          #     input: 1
+          #     output: 4
+          #     cacheRead: 0.25
+          #     cacheWrite: 1
+          models: {}
