@@ -93,6 +93,14 @@ node tools/check-assets.mjs
 不需要再手写 `name:` 行。完整片段见
 [examples/cordis.patch.snippet.yml](examples/cordis.patch.snippet.yml)。
 
+### 方式 0：从 GitHub 一条命令（最简单）
+
+```bash
+dsh plugin add github:xkzdwb/DSH-UsageStats-WhenNeedOverview
+```
+
+装完重启 DSH，侧边栏就会出现用量面板；价格、预算等配置见第 5 节。
+
 ### 方式 A：作为包装进 profile（推荐）
 
 在 `~/.dsh/profiles/<profile>/package.json` 里加一条依赖，并把包名加进 `bundles`：
